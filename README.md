@@ -1,2 +1,3 @@
-# putkonen
-Utility functions for the working man
+# Putkonen
+
+Utility functions for the working man.
