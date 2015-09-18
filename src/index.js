@@ -17,7 +17,27 @@ export const log = obj => console.log(JSON.stringify(obj, null, 2)) || obj
 
 /**
  * @function
- * @description Shortcut for 'map'.
+ * @description Shortcut for 'array.forEach'.
+ *
+ * @param {Array<?>} arr - Array to invoke 'fn' on.
+ * @param {Function} fn  - Function to invoke for each element in 'arr'.
+ */
+export const each = (arr, fn) => arr.forEach(fn)
+
+/**
+ * @function
+ * @description Shortut for 'array.find'.
+ *
+ * @param {Array<?>} arr - The array to search.
+ * @param {Function} fn  - The function to define if the result has been found.
+ *
+ * @return {?} The result, or 'null' if nothing was found.
+ */
+export const find = (arr, fn) => arr.find(fn)
+
+/**
+ * @function
+ * @description Shortcut for 'array.map'.
  *
  * @param {Array<?>} arr - Array to map over.
  * @param {Function} fn  - Function to map over 'arr'.
@@ -28,16 +48,7 @@ export const map = (arr, fn) => arr.map(fn)
 
 /**
  * @function
- * @description Shortcut for 'forEach'.
- *
- * @param {Array<?>} arr - Array to invoke 'fn' on.
- * @param {Function} fn  - Function to invoke for each element in 'arr'.
- */
-export const each = (arr, fn) => arr.forEach(fn)
-
-/**
- * @function
- * @description Shortcut for 'reduce'.
+ * @description Shortcut for 'array.reduce'.
  *
  * @param {Array<?>} arr          - Array to reduce.
  * @param {Function} fn           - The reducer function.
@@ -47,6 +58,17 @@ export const each = (arr, fn) => arr.forEach(fn)
  *             value for the reducer.
  */
 export const reduce = (arr, fn, initial = {}) => arr.reduce(fn, initial)
+
+/**
+ * @function
+ * @description Check if the 'value' is contained in the 'arr'.
+ *
+ * @param {Array<?>} arr   - Array to search in.
+ * @param {?}        value - Value to check for.
+ *
+ * @return {boolean} True if the 'value' is in 'arr', false if not.
+ */
+export const contains = (arr, value) => arr.indexOf(value) >= 0
 
 /**
  * @function
@@ -81,17 +103,6 @@ export const isObject = target =>
 export const has = (target, ...props) =>
 	reduce(props, (result, prop) =>
 		result ? target.hasOwnProperty(prop) : result, true)
-
-/**
- * @function
- * @description Check if the 'value' is contained in the 'arr'.
- *
- * @param {Array<?>} arr   - Array to search in.
- * @param {?}        value - Value to check for.
- *
- * @return {boolean} True if the 'value' is in 'arr', false if not.
- */
-export const contains = (arr, value) => arr.indexOf(value) >= 0
 
 /**
  * @function
