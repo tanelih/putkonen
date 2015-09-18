@@ -26,7 +26,7 @@ export const each = (arr, fn) => arr.forEach(fn)
 
 /**
  * @function
- * @description Shortut for 'array.find'.
+ * @description Shortcut for 'array.find'.
  *
  * @param {Array<?>} arr - The array to search.
  * @param {Function} fn  - The function to define if the result has been found.
@@ -34,6 +34,17 @@ export const each = (arr, fn) => arr.forEach(fn)
  * @return {?} The result, or 'null' if nothing was found.
  */
 export const find = (arr, fn) => arr.find(fn)
+
+/**
+ * @function
+ * @description Shortcut for 'array.filter'.
+ *
+ * @param {Array<?>} arr - The array to filter.
+ * @param {Function} fn  - The predicate function.
+ *
+ * @return {Array<?>} The filtered array.
+ */
+export const filter = (arr, fn) => arr.filter(fn)
 
 /**
  * @function
@@ -58,6 +69,51 @@ export const map = (arr, fn) => arr.map(fn)
  *             value for the reducer.
  */
 export const reduce = (arr, fn, initial = {}) => arr.reduce(fn, initial)
+
+/**
+ * @function
+ * @description Get the first element in the array.
+ *
+ * @param {Array<?>} arr - The array to take the first element from.
+ *
+ * @return {?} The first element in the array.
+ */
+export const first = arr => arr[0]
+
+/**
+ * @function
+ * @description Get the elements in the given array, expect the first one.
+ *
+ * @param {Array<?>} arr - The array to get the elements from.
+ *
+ * @return {Array<?>} Rest of the elements.
+ */
+export const rest = arr => arr.slice(1)
+
+/**
+ * @function
+ * @description Shortcut for 'array.concat'.
+ *
+ * @param {...Array<?>} arrays - The arrays to concatenate.
+ *
+ * @return {Array<?>} The concatenated array.
+ */
+export const concat = (...arrays) => first(arrays).concat(rest(arrays))
+
+/**
+ * @function
+ * @description Flatten an array recursively.
+ *
+ * @param {Array<?>} arr - The array to flatten.
+ *
+ * @return {Array<?>}	The flattened array.
+ */
+export const flatten = arr =>
+	reduce(arr, (flat, element) =>
+		isArray(element)
+			? concat(flat, flatten(element))
+			: element,
+		[ ])
 
 /**
  * @function
@@ -89,7 +145,7 @@ export const isArray = target => !!target && Array.isArray(target)
  * @return {boolean} True if the target is an object, false if not.
  */
 export const isObject = target =>
-	!isArray(target) && typeof target === 'object'
+	!Array.isArray(target) && typeof target === 'object'
 
 /**
  * @function
