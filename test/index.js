@@ -8,7 +8,7 @@
 import tape   from 'tape'
 import assert from 'assert'
 
-import * as putkonen from '..'
+import * as putkonen from '../src'
 
 /**
  * @typedef TestSpec {object}
@@ -35,4 +35,66 @@ const suite = (name, spec) =>
 suite('putkonen.map', {
 	'should invoke the \'fn\' each pass': () =>
 		putkonen.map([1, 1, 1], n => n + 1).map(n => assert.equal(n, 2))
+})
+
+suite('putkonen.merge', {
+	'should handle simple objects': () => {
+		let a      = { foo: 'bar'  }
+		let b      = { baz: 'quux' }
+		let merged = putkonen.merge(a, b)
+
+		assert.equal(putkonen.keys(merged).length, 2)
+
+		assert(putkonen.has(merged, 'foo'))
+		assert(putkonen.has(merged, 'baz'))
+
+		assert.notStrictEqual(merged, a)
+		assert.notStrictEqual(merged, b)
+
+		return true
+	},
+
+	'should handle nested objects': () => {
+		let a      = { foo: 'bar'  }
+		let b      = { baz: 'quux', bish: { bosh: 'bush' } }
+		let merged = putkonen.merge(a, b)
+
+		assert.equal(putkonen.keys(merged).length, 3)
+
+		assert(putkonen.has(merged, 'foo'))
+		assert(putkonen.has(merged, 'baz'))
+		assert(putkonen.has(merged, 'bish'))
+
+		assert(putkonen.has(merged.bish, 'bosh'))
+
+		assert.notStrictEqual(merged, a)
+		assert.notStrictEqual(merged, b)
+
+		assert.notStrictEqual(merged.bish, b.bish)
+
+		return true
+	}
+})
+
+suite('putkonen.flatten', {
+	'should handle non-nested arrays': () => {
+		let flat = putkonen.flatten([1, 1, 1])
+			.map(n => assert.equal(n, 1) || n)
+		return assert.equal(flat.length, 3) || true
+	},
+
+	'should handle single-level nesting': () => {
+		let flat = putkonen.flatten([1, [ 1 ], 1, [ 1 ]])
+			.map(n => assert.equal(n, 1) || n)
+		return assert.equal(flat.length, 4) || true
+	},
+
+	'should handle nesting many levels deep': () => {
+		let arr = [
+			1, [ 1, [ 1, [ 1 ], [ 1 ] ], [ 1 ] ], 1, 1, [ 1 ], [ [ [ 1 ] ] ]
+		]
+		let flat = putkonen.flatten(arr)
+			.map(n => assert.equal(n, 1) || n)
+		return assert.equal(flat.length, 10) || true
+	}
 })

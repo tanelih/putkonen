@@ -98,7 +98,7 @@ export const rest = arr => arr.slice(1)
  *
  * @return {Array<?>} The concatenated array.
  */
-export const concat = (...arrays) => first(arrays).concat(rest(arrays))
+export const concat = (target, ...arrays) => target.concat(...arrays)
 
 /**
  * @function
@@ -110,10 +110,7 @@ export const concat = (...arrays) => first(arrays).concat(rest(arrays))
  */
 export const flatten = arr =>
 	reduce(arr, (flat, element) =>
-		isArray(element)
-			? concat(flat, flatten(element))
-			: element,
-		[ ])
+		concat(flat, isArray(element) ? flatten(element) : element), [ ])
 
 /**
  * @function
@@ -134,7 +131,7 @@ export const contains = (arr, value) => arr.indexOf(value) >= 0
  *
  * @return {boolean} True if the target is an array, false if not.
  */
-export const isArray = target => !!target && Array.isArray(target)
+export const isArray = target => Array.isArray(target)
 
 /**
  * @function
@@ -145,7 +142,7 @@ export const isArray = target => !!target && Array.isArray(target)
  * @return {boolean} True if the target is an object, false if not.
  */
 export const isObject = target =>
-	!Array.isArray(target) && typeof target === 'object'
+	!isArray(target) && !!target && typeof target === 'object'
 
 /**
  * @function
@@ -208,8 +205,10 @@ export const merge = (...objects) =>
 			// if the 'key' is an object, we want to merge it recursively,
 			// otherwise we can just assign the new value on top
 			has(target, key) && isObject(target[key]) && isObject(source[key])
-				? assign(target, { [key]: merge(target[key], source[key]) })
-				: assign(target, { [key]: source[key] }),
+				? assign(target, { [key]: merge(source[key], target[key]) })
+				// note that we do an 'assign' for the 'source[key]' to avoid
+				// copying by reference
+				: assign(target, { [key]: assign(source[key]) }),
 			// the initial value for the 'keys' reduce is the 'target'
 			target)))
 
