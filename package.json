@@ -4,7 +4,7 @@
   "description": "Utility functions for the working man.",
   "main": "index.js",
   "scripts": {
-    "test": "babel-node test",
+    "test": "babel-node test | tap-spec",
     "build": "babel src/index.js --out-file dist/index.js",
     "watch": "babel src/index.js --out-file dist/index.js  --watch"
   },
@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/tanelih/putkonen",
   "devDependencies": {
-    "babel": "^5.8.23",
-    "tape": "^4.2.0"
+    "babel": "5.8.23",
+    "tap-spec": "4.1.0",
+    "tape": "4.2.0"
   }
 }

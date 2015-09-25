@@ -106,7 +106,7 @@ export const concat = (target, ...arrays) => target.concat(...arrays)
  *
  * @param {Array<?>} arr - The array to flatten.
  *
- * @return {Array<?>}	The flattened array.
+ * @return {Array<?>} The flattened array.
  */
 export const flatten = arr =>
 	reduce(arr, (flat, element) =>
@@ -142,7 +142,10 @@ export const isArray = target => Array.isArray(target)
  * @return {boolean} True if the target is an object, false if not.
  */
 export const isObject = target =>
-	!isArray(target) && !!target && typeof target === 'object'
+	!isArray(target) &&
+	!(target instanceof String) &&
+	// supposedly 'typeof null' is 'object'...
+	!!target && typeof target === 'object'
 
 /**
  * @function
