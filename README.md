@@ -12,9 +12,7 @@ npm install --save putkonen
 ```
 
 ```js
-import { each, flatten } from 'putkonen'
+import { flatten } from 'putkonen'
 
-let flat = flatten(['foo', [ 'bar', [ 'baz' ] ]])
-console.log(flat)
-// ['foo', 'bar', 'baz']
+flatten(['foo', ['bar', ['baz']]]) // ['foo', 'bar', 'baz']
 ```
