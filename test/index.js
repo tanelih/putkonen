@@ -6,7 +6,7 @@
  */
 
 import tape          from 'tape'
-import * as putkonen from '../src'
+import * as putkonen from '../dist'
 
 /**
  * @typedef TestSpec {object}

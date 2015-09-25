@@ -28,7 +28,47 @@ var log = function log(obj) {
 exports.log = log;
 /**
  * @function
- * @description Shortcut for 'map'.
+ * @description Shortcut for 'array.forEach'.
+ *
+ * @param {Array<?>} arr - Array to invoke 'fn' on.
+ * @param {Function} fn  - Function to invoke for each element in 'arr'.
+ */
+var each = function each(arr, fn) {
+  return arr.forEach(fn);
+};
+
+exports.each = each;
+/**
+ * @function
+ * @description Shortcut for 'array.find'.
+ *
+ * @param {Array<?>} arr - The array to search.
+ * @param {Function} fn  - The function to define if the result has been found.
+ *
+ * @return {?} The result, or 'null' if nothing was found.
+ */
+var find = function find(arr, fn) {
+  return arr.find(fn);
+};
+
+exports.find = find;
+/**
+ * @function
+ * @description Shortcut for 'array.filter'.
+ *
+ * @param {Array<?>} arr - The array to filter.
+ * @param {Function} fn  - The predicate function.
+ *
+ * @return {Array<?>} The filtered array.
+ */
+var filter = function filter(arr, fn) {
+  return arr.filter(fn);
+};
+
+exports.filter = filter;
+/**
+ * @function
+ * @description Shortcut for 'array.map'.
  *
  * @param {Array<?>} arr - Array to map over.
  * @param {Function} fn  - Function to map over 'arr'.
@@ -42,19 +82,7 @@ var map = function map(arr, fn) {
 exports.map = map;
 /**
  * @function
- * @description Shortcut for 'forEach'.
- *
- * @param {Array<?>} arr - Array to invoke 'fn' on.
- * @param {Function} fn  - Function to invoke for each element in 'arr'.
- */
-var each = function each(arr, fn) {
-  return arr.forEach(fn);
-};
-
-exports.each = each;
-/**
- * @function
- * @description Shortcut for 'reduce'.
+ * @description Shortcut for 'array.reduce'.
  *
  * @param {Array<?>} arr          - Array to reduce.
  * @param {Function} fn           - The reducer function.
@@ -71,50 +99,62 @@ var reduce = function reduce(arr, fn) {
 exports.reduce = reduce;
 /**
  * @function
- * @description Simple check to make sure the target is an array.
+ * @description Get the first element in the array.
  *
- * @param {?} target - The target to be checked.
+ * @param {Array<?>} arr - The array to take the first element from.
  *
- * @return {boolean} True if the target is an array, false if not.
+ * @return {?} The first element in the array.
  */
-var isArray = function isArray(target) {
-  return !!target && Array.isArray(target);
+var first = function first(arr) {
+  return arr[0];
 };
 
-exports.isArray = isArray;
+exports.first = first;
 /**
  * @function
- * @description Simple check to make sure the target is an object.
+ * @description Get the elements in the given array, expect the first one.
  *
- * @param {?} target - The target to be checked.
+ * @param {Array<?>} arr - The array to get the elements from.
  *
- * @return {boolean} True if the target is an object, false if not.
+ * @return {Array<?>} Rest of the elements.
  */
-var isObject = function isObject(target) {
-  return !isArray(target) && typeof target === 'object';
+var rest = function rest(arr) {
+  return arr.slice(1);
 };
 
-exports.isObject = isObject;
+exports.rest = rest;
 /**
  * @function
- * @description Check if the 'target' object has the given 'props'.
+ * @description Shortcut for 'array.concat'.
  *
- * @param {object}    target - The 'target' object.
- * @param {...string} props  - We check that these exist in the 'target'.
+ * @param {...Array<?>} arrays - The arrays to concatenate.
  *
- * @return {boolean} True if the 'target' object has the 'props'.
+ * @return {Array<?>} The concatenated array.
  */
-var has = function has(target) {
-  for (var _len = arguments.length, props = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    props[_key - 1] = arguments[_key];
+var concat = function concat(target) {
+  for (var _len = arguments.length, arrays = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    arrays[_key - 1] = arguments[_key];
   }
 
-  return reduce(props, function (result, prop) {
-    return result ? target.hasOwnProperty(prop) : result;
-  }, true);
+  return target.concat.apply(target, arrays);
 };
 
-exports.has = has;
+exports.concat = concat;
+/**
+ * @function
+ * @description Flatten an array recursively.
+ *
+ * @param {Array<?>} arr - The array to flatten.
+ *
+ * @return {Array<?>} The flattened array.
+ */
+var flatten = function flatten(arr) {
+  return reduce(arr, function (flat, element) {
+    return concat(flat, isArray(element) ? flatten(element) : element);
+  }, []);
+};
+
+exports.flatten = flatten;
 /**
  * @function
  * @description Check if the 'value' is contained in the 'arr'.
@@ -131,6 +171,54 @@ var contains = function contains(arr, value) {
 exports.contains = contains;
 /**
  * @function
+ * @description Simple check to make sure the target is an array.
+ *
+ * @param {?} target - The target to be checked.
+ *
+ * @return {boolean} True if the target is an array, false if not.
+ */
+var isArray = function isArray(target) {
+  return Array.isArray(target);
+};
+
+exports.isArray = isArray;
+/**
+ * @function
+ * @description Simple check to make sure the target is an object.
+ *
+ * @param {?} target - The target to be checked.
+ *
+ * @return {boolean} True if the target is an object, false if not.
+ */
+var isObject = function isObject(target) {
+  return !isArray(target) && !(target instanceof String) &&
+  // supposedly 'typeof null' is 'object'...
+  !!target && typeof target === 'object';
+};
+
+exports.isObject = isObject;
+/**
+ * @function
+ * @description Check if the 'target' object has the given 'props'.
+ *
+ * @param {object}    target - The 'target' object.
+ * @param {...string} props  - We check that these exist in the 'target'.
+ *
+ * @return {boolean} True if the 'target' object has the 'props'.
+ */
+var has = function has(target) {
+  for (var _len2 = arguments.length, props = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+    props[_key2 - 1] = arguments[_key2];
+  }
+
+  return reduce(props, function (result, prop) {
+    return result ? target.hasOwnProperty(prop) : result;
+  }, true);
+};
+
+exports.has = has;
+/**
+ * @function
  * @description Shortcut for 'Object.keys'. Get the 'keys' for the given object.
  *
  * @param {object} target - The 'target' object.
@@ -144,6 +232,21 @@ var keys = function keys(target) {
 exports.keys = keys;
 /**
  * @function
+ * @description Returns the values corresponding to the object keys.
+ *
+ * @param {object} target - The 'target' object.
+ *
+ * @return {Array<?>} Array of the object values.
+ */
+var values = function values(target) {
+  return keys(target).map(function (key) {
+    return target[key];
+  });
+};
+
+exports.values = values;
+/**
+ * @function
  * @description Simple shortcut method for 'Object.assign', which behaves as if
  *              given an empty object as the 'target' to 'Object.assign'.
  *
@@ -152,8 +255,8 @@ exports.keys = keys;
  * @return {object} The 'target' object.
  */
 var assign = function assign() {
-  for (var _len2 = arguments.length, sources = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-    sources[_key2] = arguments[_key2];
+  for (var _len3 = arguments.length, sources = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+    sources[_key3] = arguments[_key3];
   }
 
   return Object.assign.apply(Object, [{}].concat(sources));
@@ -170,8 +273,8 @@ exports.assign = assign;
  * @return {object} The merged object.
  */
 var merge = function merge() {
-  for (var _len3 = arguments.length, objects = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-    objects[_key3] = arguments[_key3];
+  for (var _len4 = arguments.length, objects = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+    objects[_key4] = arguments[_key4];
   }
 
   return(
@@ -183,7 +286,10 @@ var merge = function merge() {
         return(
           // if the 'key' is an object, we want to merge it recursively,
           // otherwise we can just assign the new value on top
-          has(target, key) && isObject(target[key]) && isObject(source[key]) ? assign(target, _defineProperty({}, key, merge(target[key], source[key]))) : assign(target, _defineProperty({}, key, source[key]))
+          has(target, key) && isObject(target[key]) && isObject(source[key]) ? assign(target, _defineProperty({}, key, merge(source[key], target[key])))
+          // note that we do an 'assign' for the 'source[key]' to avoid
+          // copying by reference
+          : assign(target, _defineProperty({}, key, assign(source[key])))
         );
       },
       // the initial value for the 'keys' reduce is the 'target'
@@ -219,8 +325,8 @@ exports.wrap = wrap;
  * @return {object} Object without the 'props'.
  */
 var omit = function omit(target) {
-  for (var _len4 = arguments.length, props = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-    props[_key4 - 1] = arguments[_key4];
+  for (var _len5 = arguments.length, props = Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
+    props[_key5 - 1] = arguments[_key5];
   }
 
   return reduce(keys(target), function (result, key) {
