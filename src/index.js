@@ -209,9 +209,11 @@ export const merge = (...objects) =>
 			// otherwise we can just assign the new value on top
 			has(target, key) && isObject(target[key]) && isObject(source[key])
 				? assign(target, { [key]: merge(source[key], target[key]) })
-				// note that we do an 'assign' for the 'source[key]' to avoid
-				// copying by reference
-				: assign(target, { [key]: assign(source[key]) }),
+				: assign(target, {
+						// in order to avoid any crazy copy-by-reference shenanigans, we
+						// use merge to copy any objects completely.
+						[key]: isObject(source[key]) ? merge({ }, source[key]) : source[key]
+					}),
 			// the initial value for the 'keys' reduce is the 'target'
 			target)))
 

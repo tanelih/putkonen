@@ -286,10 +286,7 @@ var merge = function merge() {
         return(
           // if the 'key' is an object, we want to merge it recursively,
           // otherwise we can just assign the new value on top
-          has(target, key) && isObject(target[key]) && isObject(source[key]) ? assign(target, _defineProperty({}, key, merge(source[key], target[key])))
-          // note that we do an 'assign' for the 'source[key]' to avoid
-          // copying by reference
-          : assign(target, _defineProperty({}, key, assign(source[key])))
+          has(target, key) && isObject(target[key]) && isObject(source[key]) ? assign(target, _defineProperty({}, key, merge(source[key], target[key]))) : assign(target, _defineProperty({}, key, isObject(source[key]) ? merge({}, source[key]) : source[key]))
         );
       },
       // the initial value for the 'keys' reduce is the 'target'
@@ -334,3 +331,6 @@ var omit = function omit(target) {
   });
 };
 exports.omit = omit;
+
+// in order to avoid any crazy copy-by-reference shenanigans, we
+// use assign to copy any objects.
