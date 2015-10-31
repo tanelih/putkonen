@@ -40,7 +40,6 @@ const suite = (name, spec) =>
 const areElementsTrue = arr =>
 	putkonen.reduce(arr, (v, e) => v ? e : v, true)
 
-
 suite('putkonen.isArray', {
 	'should handle objects': () =>
 		!putkonen.isArray({ }),
@@ -121,4 +120,15 @@ suite('putkonen.flatten', {
 			.map(n => n === 1)
 		return flat.length === 10 && areElementsTrue(flat)
 	}
+})
+
+suite('putkonen.omit', {
+	'should work': () =>
+		putkonen.has(
+			putkonen.omit({ foo: 'bar', baz: 'quux' }, 'baz'), 'foo') &&
+		!putkonen.has(
+			putkonen.omit({ foo: 'bar', baz: 'quux' }, 'baz'), 'baz'),
+
+	'should not mess with values': () =>
+		putkonen.omit({ foo: 'bar', baz: 'quux' }, 'baz').foo === 'bar',
 })
